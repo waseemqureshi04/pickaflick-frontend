@@ -67,7 +67,9 @@ const Login = () => {
         email.current.value,
         password.current.value
       )
-        .then((userCredential) => {
+        .then(() => {
+          // ✅ FIX: Removed the unused 'userCredential' parameter here.
+          // The onAuthStateChanged in Header.js will handle the redirection automatically.
         })
         .catch((error) => {
           if (error.code === "auth/invalid-credential") {
