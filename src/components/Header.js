@@ -1,7 +1,7 @@
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { LOGO, SUPPORTED_LANGUAGES } from "../utils/constants";
 import { auth } from "../utils/firebase";
 import { addUser, removeUser } from "../utils/userSlice";
@@ -11,6 +11,7 @@ import { changeLanguage } from "../utils/configSlice";
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation(); // Get current route
   const user = useSelector((store) => store.user);
   const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
 
@@ -25,6 +26,7 @@ const Header = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        // User is signed in
         const { uid, email, displayName, photoURL } = user;
         dispatch(
           addUser({
@@ -34,15 +36,23 @@ const Header = () => {
             photoURL: photoURL,
           })
         );
-        navigate("/browse");
+        // If user is on Login/Landing page, move them to Browse
+        if (location.pathname === "/" || location.pathname === "/auth") {
+           navigate("/browse");
+        }
       } else {
+        // User is signed out
         dispatch(removeUser());
-        navigate("/");
+        
+        if (location.pathname !== "/" && location.pathname !== "/auth") {
+           navigate("/");
+        }
       }
     });
 
+    // Unsubscribe when component unmounts
     return () => unsubscribe();
-  }, [dispatch, navigate]);
+  }, [dispatch, navigate, location.pathname]); // Added location.pathname to dependencies
 
   const handleGptSearchClick = () => {
     dispatch(toggleGptSearchView());

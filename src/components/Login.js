@@ -10,15 +10,23 @@ import { auth } from "../utils/firebase";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { BG_URL, USER_AVATAR } from "../utils/constants";
+import { useLocation } from "react-router-dom"; // ✅ Import useLocation
 
 const Login = () => {
-  const [isSignInForm, setIsSignInForm] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const location = useLocation(); // ✅ Get data passed from Landing Page
   const dispatch = useDispatch();
 
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
+
+  // ✅ Check if we were sent here with specific instructions (Sign In vs Sign Up)
+  // If no state exists (user typed /auth directly), default to true (Sign In)
+  const [isSignInForm, setIsSignInForm] = useState(
+    location.state?.isSignIn !== undefined ? location.state.isSignIn : true
+  );
+
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleButtonClick = () => {
     const message = checkValidData(email.current.value, password.current.value);
@@ -68,8 +76,7 @@ const Login = () => {
         password.current.value
       )
         .then(() => {
-          // ✅ FIX: Removed the unused 'userCredential' parameter here.
-          // The onAuthStateChanged in Header.js will handle the redirection automatically.
+          // Success handled by Header.js
         })
         .catch((error) => {
           if (error.code === "auth/invalid-credential") {
