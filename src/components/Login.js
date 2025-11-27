@@ -68,7 +68,6 @@ const Login = () => {
         password.current.value
       )
         .then((userCredential) => {
-          const user = userCredential.user;
         })
         .catch((error) => {
           if (error.code === "auth/invalid-credential") {
