@@ -5,7 +5,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { LOGO, SUPPORTED_LANGUAGES } from "../utils/constants";
 import { auth } from "../utils/firebase";
 import { addUser, removeUser } from "../utils/userSlice";
-import { toggleGptSearchView } from "../utils/gptSlice";
 import { changeLanguage } from "../utils/configSlice";
 import { KeyboardArrowDown, Logout } from "@mui/icons-material";
 
@@ -14,12 +13,11 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((store) => store.user);
-  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
   const isModalOpen = useSelector((store) => store.config.isModalOpen);
   const [isOpen, setIsOpen] = useState(false);
-
-  // Check if we are on the GPT page to show language selector
   const isGptPage = location.pathname === "/gpt";
+  const isHomePage = location.pathname === "/home" || location.pathname === "/browse";
+  const isStudioPage = location.pathname === "/studio" || location.pathname === "/features";
 
   const handleSignOut = () => {
     signOut(auth).then(() => {}).catch((error) => { navigate("/error"); });
@@ -49,7 +47,6 @@ const Header = () => {
   if (isModalOpen) return null;
 
   return (
-    // ✅ FIX: Removed 'backdrop-blur' and used a solid gradient to prevent bugs
     <div 
       className="absolute w-full px-4 py-4 bg-gradient-to-b from-black z-50 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0 transition-all duration-300"
     >
@@ -69,31 +66,30 @@ const Header = () => {
             </select>
           )}
           
-          {/* ✅ FIX: Transparent buttons with specific hover colors */}
-          <button 
-            className="py-1 px-3 md:py-2 bg-red-700 md:px-4 text-white rounded-lg text-xs md:text-sm hover:bg-red-700 transition" 
-            onClick={() => navigate("/home")}
-          >
-            Home
-          </button>
-
-          <button 
-            className="py-1 px-3 md:py-2 bg-indigo-600 md:px-4  text-white rounded-lg text-xs md:text-sm hover:bg-indigo-600 transition shadow-lg" 
-            onClick={() => navigate("/studio")}
-          >
-            Studio
-          </button>
-          
-          {isGptPage ? (
-             <button 
-               className="py-1 px-3 md:py-2 bg-purple-600 md:px-4  text-white rounded-lg text-xs  md:text-sm hover:bg-purple-600 transition whitespace-nowrap shadow-lg" 
-               onClick={() => navigate("/home")}
-             >
-               Exit GPT
-             </button>
-          ) : (
+          {/* ✅ Hide Home Button if already on Home */}
+          {!isHomePage && (
             <button 
-              className="py-1 px-3 md:py-2 bg-purple-600 md:px-4  text-white rounded-lg text-xs  md:text-sm hover:bg-purple-600 transition whitespace-nowrap shadow-lg" 
+              className="py-1 px-3 bg-red-700 md:py-2 md:px-4  border border-gray-700 text-white rounded-lg text-xs md:text-smtransition" 
+              onClick={() => navigate("/home")}
+            >
+              Home
+            </button>
+          )}
+
+          {/* ✅ Hide Studio Button if already on Studio */}
+          {!isStudioPage && (
+            <button 
+              className="py-1 px-3 bg-indigo-600 md:py-2 md:px-4 border-gray-700 text-white rounded-lg text-xs md:text-sm transition" 
+              onClick={() => navigate("/studio")}
+            >
+              Studio
+            </button>
+          )}
+          
+          {/* ✅ Hide GPT Button if already on GPT */}
+          {!isGptPage && (
+            <button 
+              className="py-1 px-3 md:py-2 bg-purple-600 md:px-4 border border-gray-700 text-white rounded-lg text-xs md:text-sm transition whitespace-nowrap" 
               onClick={() => navigate("/gpt")}
             >
               GPT Search
@@ -106,7 +102,6 @@ const Header = () => {
                 <KeyboardArrowDown className={`text-white transition-transform duration-200 drop-shadow-md ${isOpen ? 'rotate-180' : ''}`} />
             </div>
             
-            {/* ✅ FIX: Removed backdrop-blur from dropdown */}
             {isOpen && (
                 <div className="absolute right-0 mt-2 w-40 md:w-48 bg-black border border-gray-700 rounded-lg shadow-xl overflow-hidden animate-fade z-50">
                     <div className="px-4 py-3 border-b border-gray-700"><p className="text-xs text-gray-400">Signed in as</p><p className="text-sm font-bold text-white truncate">{user.displayName || "User"}</p></div>

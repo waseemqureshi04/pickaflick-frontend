@@ -57,7 +57,7 @@ const VPNScout = () => {
       <div className="flex gap-2 mb-6">
         <input
           className="p-2 text-black rounded w-full md:w-1/3"
-          placeholder="Search movie..."
+          placeholder="Search a Movie"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
