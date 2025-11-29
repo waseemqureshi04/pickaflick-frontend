@@ -1,23 +1,28 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Browse from "./Browse";
 import Login from "./Login";
-import LandingPage from "./LandingPage"; //Import LandingPage
-import { RouterProvider } from "react-router-dom";
+import Register from "./Register";
+import ResetPassword from "./ResetPassword";
+import LandingPage from "./LandingPage";
+import Features from "./Features";
+import GptSearch from "./GptSearch"; // ✅ Import this
+import PrivacyPolicy from "./PrivacyPolicy";
+import TermsOfService from "./TermsOfService";
 
 const Body = () => {
   const appRouter = createBrowserRouter([
-    {
-      path: "/",
-      element: <LandingPage />, //Root is now the Intro Page
-    },
-    {
-      path: "/auth", // Login component moved to this new path
-      element: <Login />,
-    },
-    {
-      path: "/browse",
-      element: <Browse />,
-    },
+    { path: "/", element: <LandingPage /> },
+    { path: "/login", element: <Login /> },
+    { path: "/register", element: <Register /> },
+    { path: "/reset-password", element: <ResetPassword /> },
+    
+    // ✅ NEW: Cleaner URLs
+    { path: "/home", element: <Browse /> },  // Was /browse
+    { path: "/studio", element: <Features /> }, // Was /features
+    { path: "/gpt", element: <GptSearch /> },   // New dedicated route
+    
+    { path: "/privacy-policy", element: <PrivacyPolicy /> },
+    { path: "/terms-of-service", element: <TermsOfService /> },
   ]);
 
   return (

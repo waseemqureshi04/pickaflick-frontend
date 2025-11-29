@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
+import { IconButton, Typography, Box, Paper } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { useDispatch } from "react-redux"; // ✅ Import useDispatch
+import { setModalOpen } from "../utils/configSlice"; // ✅ Import action
 
 const MovieModal = ({ movie, onClose }) => {
+  const dispatch = useDispatch(); // ✅ Init dispatch
   const [trailerKey, setTrailerKey] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [trailerError, setTrailerError] = useState(false);
@@ -8,16 +13,12 @@ const MovieModal = ({ movie, onClose }) => {
   useEffect(() => {
     if (!movie?.id) return;
 
+    // ✅ Hide Header when Modal opens
+    dispatch(setModalOpen(true));
+
     // Fetch trailer
     fetch(
-      `https://api.pickaflick.live/api/tmdb/movie/${movie.id}/videos?language=en-US`,
-      {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${process.env.REACT_APP_TMDB_KEY}`,
-        },
-      }
+      `https://api.pickaflick.live/api/tmdb/movie/${movie.id}/videos?language=en-US`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -31,79 +32,111 @@ const MovieModal = ({ movie, onClose }) => {
 
     // Fetch reviews
     fetch(
-      `https://api.pickaflick.live/api/tmdb/movie/${movie.id}/reviews?language=en-US&page=1`,
-      {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${process.env.REACT_APP_TMDB_KEY}`,
-        },
-      }
+      `https://api.pickaflick.live/api/tmdb/movie/${movie.id}/reviews?language=en-US&page=1`
     )
       .then((res) => res.json())
       .then((data) => setReviews(data.results || []));
-  }, [movie]);
+
+    // ✅ Cleanup: Show Header again when Modal closes/unmounts
+    return () => {
+      dispatch(setModalOpen(false));
+    };
+  }, [movie, dispatch]);
 
   if (!movie) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
-      <div className="bg-neutral-800 text-white p-6 rounded-md w-11/12 md:w-2/3 lg:w-1/2 max-h-screen overflow-y-auto relative">
+    <div className="fixed inset-0 bg-black/90 flex justify-center items-center z-[1300] backdrop-blur-md p-4">
+      <Paper 
+        elevation={24}
+        sx={{ 
+            bgcolor: "#181818", 
+            color: "white", 
+            p: { xs: 2, md: 4 },
+            borderRadius: 2, 
+            width: { xs: "95%", md: "70%", lg: "60%" },
+            maxHeight: "90vh",
+            overflowY: "auto",
+            position: "relative",
+            marginTop: { xs: "0px", md: 0 }, // ✅ Removed top margin since header is gone
+            "&::-webkit-scrollbar": { display: "none" },
+            scrollbarWidth: "none",
+            "-ms-overflow-style": "none",
+        }}
+      >
 
-        {/* ❌ Netflix-style Close Button */}
-        <button
-          className="absolute top-4 right-4 text-red-600 hover:text-red-700 text-2xl font-bold"
+        {/* Close Button */}
+        <IconButton
           onClick={onClose}
+          sx={{ 
+            position: "absolute", 
+            top: 10, 
+            right: 10, 
+            color: "gray", 
+            bgcolor: "rgba(0,0,0,0.5)",
+            "&:hover": { color: "white", bgcolor: "rgba(0,0,0,0.8)" } 
+          }}
         >
-          ✖
-        </button>
+          <CloseIcon />
+        </IconButton>
 
-        {/* Title & Rating */}
-        <h2 className="text-2xl font-bold mb-2">{movie.title}</h2>
-        <p className="mb-2 font-semibold">Ratings: {movie.vote_average}⭐</p>
+        <Typography 
+            variant="h4" 
+            fontWeight="bold" 
+            gutterBottom 
+            sx={{ pr: 4, fontSize: { xs: "1.5rem", md: "2.125rem" } }}
+        >
+          {movie.title}
+        </Typography>
+        
+        <Typography variant="subtitle1" sx={{ color: "#fbbf24", fontWeight: "bold", mb: 2 }}>
+          ⭐ {movie.vote_average.toFixed(1)} / 10 
+          <span style={{ color: "#aaa", fontWeight: "normal", marginLeft: "10px" }}>
+            ({movie.release_date?.split("-")[0]})
+          </span>
+        </Typography>
 
-        {/* Overview */}
-        <p className="mb-4">{movie.overview}</p>
+        <Typography variant="body1" sx={{ mb: 4, color: "#ddd", lineHeight: 1.6, fontSize: { xs: "0.9rem", md: "1rem" } }}>
+          {movie.overview}
+        </Typography>
 
-        {/* Trailer or Fallback */}
         {trailerKey ? (
-          <div className="mb-6">
+          <Box sx={{ position: "relative", paddingBottom: "56.25%", height: 0, width: "100%", mb: 4, borderRadius: "8px", overflow: "hidden" }}>
             <iframe
-              width="100%"
-              height="315"
+              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", borderRadius: "8px" }}
               src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1`}
               title="YouTube Trailer"
               frameBorder="0"
               allow="autoplay; encrypted-media"
               allowFullScreen
             ></iframe>
-          </div>
+          </Box>
         ) : trailerError ? (
-          <div className="mb-6 text-gray-400 italic">
-            Trailer not available in your region.
-          </div>
+          <Box sx={{ height: 150, bgcolor: "#000", display: "flex", alignItems: "center", justifyContent: "center", mb: 4, borderRadius: 2 }}>
+             <Typography variant="body2" color="gray">Trailer not available.</Typography>
+          </Box>
         ) : null}
 
-        {/* Reviews */}
         {reviews.length > 0 && (
-          <div>
-            <h3 className="text-xl font-semibold mb-2">User Reviews:</h3>
-            <ul className="space-y-2">
+          <Box sx={{ mt: 2, pt: 3, borderTop: "1px solid #333" }}>
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+              User Reviews
+            </Typography>
+            <ul className="list-none p-0 m-0 space-y-4">
               {reviews.slice(0, 3).map((review) => (
-                <li
-                  key={review.id}
-                  className="border border-gray-600 p-3 rounded"
-                >
-                  <p className="text-sm font-bold">{review.author}</p>
-                  <p className="text-sm italic">
-                    "{review.content.slice(0, 200)}..."
-                  </p>
+                <li key={review.id} className="bg-[#222] p-4 rounded-lg border border-[#333]">
+                  <Typography variant="subtitle2" fontWeight="bold" sx={{ color: "#e50914" }}>
+                    {review.author}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: "#bbb", mt: 1, fontStyle: "italic", fontSize: "0.85rem" }}>
+                    "{review.content.slice(0, 150)}..."
+                  </Typography>
                 </li>
               ))}
             </ul>
-          </div>
+          </Box>
         )}
-      </div>
+      </Paper>
     </div>
   );
 };

@@ -9,7 +9,7 @@ const MovieCard = ({ movie, onClick }) => {
       onClick={() => onClick(movie)}
     >
       <img 
-        className="rounded-lg shadow-lg"
+        className="rounded-lg shadow-lg " // Added Rounded corners and shadow
         alt={movie.title} 
         src={IMG_CDN_URL + movie.poster_path} 
       />

@@ -23,9 +23,13 @@ const MovieList = ({ title, movies }) => {
 
   return (
     <div className="px-6 mb-12">
-      {title && <h1 className="text-lg md:text-3xl py-4 text-white font-bold">{title}</h1>}
-      <div className="relative group">
       
+      {/* 1. Title is OUTSIDE the relative group so buttons don't cover it */}
+      {title && <h1 className="text-lg md:text-3xl py-4 text-white font-bold">{title}</h1>}
+
+      {/* 2. Create a relative container JUST for the cards and buttons */}
+      <div className="relative group">
+        
         {/* Left Button - Height matches cards, Gradient background */}
         <button 
           onClick={scrollLeft}

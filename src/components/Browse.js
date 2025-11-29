@@ -1,32 +1,35 @@
 import Header from "./Header";
 import useNowPlayingMovies from "../hooks/useNowPlayingMovies";
 import usePopularMovies from "../hooks/usePopularMovies";
-import useTrendingMovies from "../hooks/useTrendingMovies";
-import useUpcomingMovies from "../hooks/useUpcomingMovies";
+import useTrendingMovies from "../hooks/useTrendingMovies"; 
+import useUpcomingMovies from "../hooks/useUpcomingMovies"; 
 import MainContainer from "./MainContainer";
 import SecondaryContainer from "./SecondaryContainer";
-import GptSearch from "./GptSearch";
-import { useSelector } from "react-redux";
+import { BG_URL } from "../utils/constants";
 
 const Browse = () => {
-  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
-
+  // Fetch Data
   useNowPlayingMovies();
   usePopularMovies();
   useTrendingMovies();
   useUpcomingMovies();
 
   return (
-    <div className="w-full overflow-x-hidden">
+    <div className="w-full min-h-screen bg-black relative">
       <Header />
-      {showGptSearch ? (
-        <GptSearch />
-      ) : (
-        <>
-          <MainContainer />
-          <SecondaryContainer />
-        </>
-      )}
+      
+      {/* Global Background Image */}
+      <div className="fixed top-0 left-0 w-full h-full -z-10">
+        <img 
+            className="h-full w-full object-cover opacity-50" 
+            src={BG_URL} 
+            alt="background" 
+        />
+        <div className="absolute inset-0 bg-black/60"></div>
+      </div>
+
+      <MainContainer />
+      <SecondaryContainer />
     </div>
   );
 };
