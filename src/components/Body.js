@@ -12,7 +12,7 @@ import Homepage from "./Homepage";
 const Body = () => {
   const appRouter = createBrowserRouter([
     { path: "/", element: <LandingPage /> },
-    { path: "/homepage", element: <Homepage /> }, // ✅ Added for Google Verification
+    { path: "/homepage", element: <Homepage /> }, // Added for Google Verification
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
     { path: "/reset-password", element: <ResetPassword /> },
