@@ -4,13 +4,13 @@ const configSlice = createSlice({
   name: "config",
   initialState: {
     lang: "en",
-    isModalOpen: false, // ✅ NEW: Track if a modal is active
+    isModalOpen: false,
   },
   reducers: {
     changeLanguage: (state, action) => {
       state.lang = action.payload;
     },
-    setModalOpen: (state, action) => { // ✅ NEW: Action to toggle header
+    setModalOpen: (state, action) => {
       state.isModalOpen = action.payload;
     },
   },

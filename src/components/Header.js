@@ -6,8 +6,7 @@ import { LOGO, SUPPORTED_LANGUAGES, USER_AVATAR } from "../utils/constants";
 import { auth } from "../utils/firebase";
 import { addUser, removeUser } from "../utils/userSlice";
 import { changeLanguage } from "../utils/configSlice";
-
-// ✅ MUI Imports
+import About from "./About";
 import {
   AppBar,
   Toolbar,
@@ -20,7 +19,7 @@ import {
   Typography,
   Container,
 } from "@mui/material";
-import { KeyboardArrowDown, Logout } from "@mui/icons-material";
+import { KeyboardArrowDown, Logout, Info } from "@mui/icons-material";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -28,9 +27,8 @@ const Header = () => {
   const location = useLocation();
   const user = useSelector((store) => store.user);
   const isModalOpen = useSelector((store) => store.config.isModalOpen);
-
-  // ✅ MUI Menu State
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [showAbout, setShowAbout] = useState(false);
   
   const isGptPage = location.pathname === "/gpt";
   const isHomePage = ["/home", "/browse"].includes(location.pathname);
@@ -65,7 +63,7 @@ const Header = () => {
     dispatch(changeLanguage(e.target.value));
   };
 
-  // ✅ Menu Handlers
+  // Menu Handlers
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -74,10 +72,15 @@ const Header = () => {
     setAnchorElUser(null);
   };
 
+  // Handle opening About Modal
+  const handleOpenAbout = () => {
+    handleCloseUserMenu();
+    setShowAbout(true);
+  };
+
   if (isModalOpen) return null;
 
   return (
-    // ✅ AppBar replaces the outer div
     <AppBar 
       position="absolute" 
       sx={{ 
@@ -131,7 +134,7 @@ const Header = () => {
                 <Button
                   variant="contained"
                   onClick={() => navigate("/home")}
-                  sx={{ bgcolor: "#b91c1c", "&:hover": { bgcolor: "#991b1b" } }} // red-700
+                  sx={{ bgcolor: "#b91c1c", "&:hover": { bgcolor: "#991b1b" } }}
                 >
                   Home
                 </Button>
@@ -151,7 +154,7 @@ const Header = () => {
                 <Button
                   variant="contained"
                   onClick={() => navigate("/gpt")}
-                  sx={{ bgcolor: "#9333ea", "&:hover": { bgcolor: "#7e22ce" }, whiteSpace: "nowrap" }} // purple-600
+                  sx={{ bgcolor: "#9333ea", "&:hover": { bgcolor: "#7e22ce" }, whiteSpace: "nowrap" }}
                 >
                   GPT Search
                 </Button>
@@ -192,6 +195,12 @@ const Header = () => {
                       <Typography variant="body2" fontWeight="bold" noWrap>{user.displayName || "User"}</Typography>
                    </Box>
 
+                  {/* Added About Dev Button */}
+                  <MenuItem onClick={handleOpenAbout} sx={{ gap: 1 }}>
+                     <Info fontSize="small" sx={{ color: "gray" }} />
+                     <Typography>About Dev</Typography>
+                  </MenuItem>
+
                   <MenuItem onClick={handleSignOut} sx={{ color: "#ef4444", fontWeight: "bold", gap: 1 }}>
                     <Logout fontSize="small" />
                     <Typography textAlign="center">Log Out</Typography>
@@ -201,6 +210,10 @@ const Header = () => {
 
             </Box>
           )}
+
+          {/* Render About Modal */}
+          <About open={showAbout} onClose={() => setShowAbout(false)} />
+
         </Toolbar>
       </Container>
     </AppBar>

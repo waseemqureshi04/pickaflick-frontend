@@ -5,8 +5,6 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOu
 import { auth } from "../utils/firebase";
 import { BG_URL } from "../utils/constants";
 import { Link } from "react-router-dom";
-
-// ✅ MUI Imports for Eye Icon and Loader ONLY
 import { IconButton, CircularProgress } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 

@@ -22,7 +22,6 @@ const LandingPage = () => {
           Your personal AI-powered movie recommendation companion.
         </p>
 
-        {/* ✅ FIX: Footer Links placed right here, below the description */}
         <div className="mt-8 text-white text-xs md:text-sm flex items-center justify-center gap-2">
             <Link to="/privacy-policy" className="hover:text-red-500 hover:underline transition">Privacy Policy</Link>
             <span className="text-gray-600">|</span>

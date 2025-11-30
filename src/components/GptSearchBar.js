@@ -2,8 +2,6 @@ import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import lang from "../utils/languageConstants";
 import { addGptMovieResult, setGptLoading } from "../utils/gptSlice";
-
-// ✅ MUI Imports
 import { Paper, InputBase, Button, CircularProgress, Box } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -59,8 +57,7 @@ const GptSearchBar = () => {
       dispatch(
         addGptMovieResult({ movieNames: gptMovies, movieResults: tmdbResults })
       );
-      
-      // ✅ Optional: Set loading to false here if you want the spinner to stop after results load
+      // Set loading to false here if you want the spinner to stop after results load
       dispatch(setGptLoading(false));
 
     } catch (error) {
@@ -95,21 +92,19 @@ const GptSearchBar = () => {
             borderRadius: "0 4px 4px 0",
             bgcolor: "#b91c1c", // red-700
             "&:hover": { bgcolor: "#991b1b" },
-            // ✅ Fix: Ensure the button stays visible and red when disabled (loading)
             "&.Mui-disabled": {
-              bgcolor: "#7f1d1d", // Darker red to indicate processing
-              color: "white"      // Force spinner/text to be white
+              bgcolor: "#7f1d1d",
+              color: "white" 
             }
           }}
           onClick={handleGptSearchClick}
           disabled={isLoading}
         >
           {isLoading ? (
-            // ✅ Fix: Force white color on loader so it doesn't fade out
             <CircularProgress size={24} sx={{ color: "white" }} />
           ) : (
             <>
-                {/* ✅ Responsive Logic: Icon only on Mobile, Icon+Text on Desktop */}
+                {/*Icon only on Mobile, Icon+Text on Desktop */}
                 <Box sx={{ display: { xs: "flex", md: "none" } }}>
                    <SearchIcon />
                 </Box>

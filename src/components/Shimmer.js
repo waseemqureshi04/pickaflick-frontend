@@ -16,7 +16,7 @@ const Shimmer = () => {
       <Skeleton 
         variant="text" 
         sx={{ 
-            bgcolor: "#374151", // gray-700
+            bgcolor: "#374151",
             fontSize: "3rem", 
             width: { xs: "60%", md: "30%" }, 
             mb: 1 
@@ -40,10 +40,9 @@ const Shimmer = () => {
             display: "flex", 
             overflowX: "scroll", 
             gap: 2,
-            // Hide Scrollbar styles
             "&::-webkit-scrollbar": { display: "none" },
-            msOverflowStyle: "none",  // IE and Edge
-            scrollbarWidth: "none",   // Firefox
+            msOverflowStyle: "none",
+            scrollbarWidth: "none",
         }}
       >
         {Array(10).fill("").map((_, index) => (

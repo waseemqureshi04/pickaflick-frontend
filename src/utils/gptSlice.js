@@ -6,7 +6,7 @@ const gptSlice = createSlice({
     showGptSearch: false,
     movieResults: null,
     movieNames: null,
-    loading: false, // ✅ NEW: Track loading state
+    loading: false, //Track loading state
   },
   reducers: {
     toggleGptSearchView: (state) => {
@@ -16,7 +16,7 @@ const gptSlice = createSlice({
       const { movieNames, movieResults } = action.payload;
       state.movieNames = movieNames;
       state.movieResults = movieResults;
-      state.loading = false; // ✅ Turn off loading when results arrive
+      state.loading = false; // Turn off loading when results arrive
     },
     setGptLoading: (state, action) => {
       state.loading = action.payload;

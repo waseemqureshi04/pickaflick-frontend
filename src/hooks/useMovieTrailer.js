@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addTrailerVideo } from "../utils/moviesSlice";
+import { API_BASE_URL } from "../utils/constants";
 
 const useMovieTrailer = (movieId) => {
   const dispatch = useDispatch();
@@ -9,7 +10,7 @@ const useMovieTrailer = (movieId) => {
   useEffect(() => {
     const getMovieVideos = async () => {
       const data = await fetch(
-        `https://api.pickaflick.live/api/tmdb/movie/${movieId}/videos?language=en-US`
+        `${API_BASE_URL}/api/tmdb/movie/${movieId}/videos?language=en-US`
       );
       const json = await data.json();
       const filterData = json.results.filter((video) => video.type === "Trailer");

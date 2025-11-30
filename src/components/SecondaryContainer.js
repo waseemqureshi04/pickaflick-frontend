@@ -7,8 +7,6 @@ const SecondaryContainer = () => {
   return (
     movies.nowPlayingMovies && (
       <div className="bg-black">
-        {/* ✅ FIX: Adjusted negative margin to push lists lower. 
-            -mt-24 on desktop ensures it doesn't overlap the title. */}
         <div className="-mt-9 -mx-3 md:-mt-5 relative z-20 pb-10">
           <MovieList title={"Now Playing"} movies={movies.nowPlayingMovies} />
           <MovieList title={"Trending"} movies={movies.trendingMovies} />

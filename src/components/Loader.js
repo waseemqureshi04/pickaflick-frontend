@@ -1,4 +1,3 @@
-// src/components/Loader.js (Optional - Create this file if you need a full screen spinner)
 import { Backdrop, CircularProgress } from "@mui/material";
 
 const Loader = () => {

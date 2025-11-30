@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { setModalOpen } from "../utils/configSlice"; 
 import { IMG_CDN_URL } from "../utils/constants"; 
 
-const MovieModal = ({ movie, onClose }) => {
+  const MovieModal = ({ movie, onClose }) => {
   const dispatch = useDispatch(); 
   const [trailerKey, setTrailerKey] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -93,19 +93,19 @@ const MovieModal = ({ movie, onClose }) => {
           <CloseIcon />
         </IconButton>
 
-        {/* ✅ Header Section: Flexbox for Title (Left) and Stream (Right) */}
+        {/* Flexbox for Title (Left) and Stream (Right) */}
         <Box 
             sx={{ 
                 display: "flex", 
-                flexDirection: { xs: "column", md: "row" }, // Stack on mobile, Row on desktop
+                flexDirection: { xs: "column", md: "row" },
                 justifyContent: "space-between", 
                 alignItems: { xs: "flex-start", md: "flex-start" },
                 mb: 2,
                 gap: 2,
-                pr: { xs: 0, md: 6 } // Add padding right on desktop so text doesn't hit Close button
+                pr: { xs: 0, md: 6 }
             }}
         >
-            {/* Left Side: Title & Rating */}
+            {/*Title & Rating */}
             <Box>
                 <Typography 
                     variant="h4" 
@@ -123,7 +123,7 @@ const MovieModal = ({ movie, onClose }) => {
                 </Typography>
             </Box>
 
-            {/* Right Side: Stream Section (Moved Here) */}
+            {/* Stream Section*/}
             {currentProviders?.flatrate && (
                 <Box sx={{ minWidth: 140, textAlign: { xs: "left", md: "right" } }}>
                     <Typography 

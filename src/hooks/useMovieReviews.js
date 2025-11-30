@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { API_OPTIONS } from "../utils/constants";
+import { API_BASE_URL, API_OPTIONS } from "../utils/constants";
 
 const useMovieReviews = (movieId) => {
   const [reviews, setReviews] = useState([]);
@@ -7,7 +7,7 @@ const useMovieReviews = (movieId) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await fetch(`https://api.pickaflick.live/api/tmdb/movie/${movieId}/reviews`, API_OPTIONS);
+        const res = await fetch(`${API_BASE_URL}/api/tmdb/movie/${movieId}/reviews`, API_OPTIONS);
         const json = await res.json();
         setReviews(json.results || []);
       } catch (err) {

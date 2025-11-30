@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { API_OPTIONS, API_BASE_URL } from "../utils/constants";
 import { addPopularMovies } from "../utils/moviesSlice";
 
 const usePopularMovies = () => {
@@ -7,14 +8,24 @@ const usePopularMovies = () => {
   const popularMovies = useSelector((store) => store.movies.popularMovies);
 
   const getPopularMovies = async () => {
-    const data = await fetch("https://api.pickaflick.live/api/tmdb/movie/popular?page=2");
-    const json = await data.json();
-    dispatch(addPopularMovies(json.results));
+    try {
+      const data = await fetch(
+        `${API_BASE_URL}/api/tmdb/movie/popular?page=1`,
+        API_OPTIONS
+      );
+
+      if (!data.ok) throw new Error("Failed to fetch");
+
+      const json = await data.json();
+      dispatch(addPopularMovies(json.results));
+    } catch (error) {
+      console.error("Error fetching Popular movies:", error);
+    }
   };
 
   useEffect(() => {
     if (!popularMovies) getPopularMovies();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
 };
 

@@ -2,8 +2,6 @@ import Header from "./Header";
 import { BG_URL } from "../utils/constants";
 import GptMovieSuggestions from "./GptMovieSuggestions";
 import GptSearchBar from "./GptSearchBar";
-
-// ✅ MUI Imports
 import { Box, Container } from "@mui/material";
 
 const GPTSearch = () => {
@@ -28,7 +26,6 @@ const GPTSearch = () => {
             alt="background" 
             sx={{ width: "100%", height: "100%", objectFit: "cover" }} 
         />
-        {/* Dark Overlay so text is readable */}
         <Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", bgcolor: "rgba(0,0,0,0.6)" }} />
       </Box>
 

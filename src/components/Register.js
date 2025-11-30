@@ -1,4 +1,4 @@
-import { useState } from "react"; // Removed useRef, using useState
+import { useState } from "react";
 import Header from "./Header";
 import { checkValidData } from "../utils/validate";
 import {
@@ -14,15 +14,11 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { BG_URL, USER_AVATAR } from "../utils/constants";
 import { Link } from "react-router-dom";
-
-// ✅ MUI Imports
 import { IconButton, CircularProgress } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Register = () => {
   const dispatch = useDispatch();
-
-  // ✅ Changed refs to state to control UI updates and button locking
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,11 +35,10 @@ const Register = () => {
     );
   };
 
-  // ✅ Function to handle input changes and clear errors/unlock button
   const handleInputChange = (setter, value) => {
     setter(value);
-    if (errorMessage) setErrorMessage(null); // Clear error when user types
-    if (successMessage) setSuccessMessage(null); // Unlock button if they edit after success
+    if (errorMessage) setErrorMessage(null);
+    if (successMessage) setSuccessMessage(null);
   };
 
   const handleButtonClick = () => {
@@ -135,7 +130,7 @@ const Register = () => {
           </div>
         </div>
 
-        {/* ✅ NEW: Password Requirements Info */}
+        {/* Password Requirements Info */}
         <div className="text-gray-400 text-xs mb-4 ml-1">
           <p>Password must contain:</p>
           <ul className="list-disc pl-5 mt-1 space-y-1">
