@@ -7,11 +7,13 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: { xs: "90%", md: 500 },
+  width: { xs: "90%", md: 500 }, // 90% width on mobile
+  maxHeight: "90vh", // ✅ Prevents overflow on small screens
+  overflowY: "auto", // ✅ Adds scroll if content is too tall
   bgcolor: "black",
   border: "1px solid #333",
   boxShadow: 24,
-  p: 4,
+  p: { xs: 3, md: 4 }, // ✅ Reduced padding on mobile (24px vs 32px)
   borderRadius: 2,
   outline: "none",
   color: "white"
@@ -31,15 +33,25 @@ const About = ({ open, onClose }) => {
         </IconButton>
 
         {/* Header: Avatar & Name */}
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 3 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 2 }}>
             <Avatar 
                 src={DEV_AVATAR}
-                sx={{ width: 100, height: 100, mb: 2, border: "2px solid #b91c1c" }} 
+                sx={{ 
+                    width: { xs: 80, md: 100 }, // ✅ Smaller avatar on mobile
+                    height: { xs: 80, md: 100 }, 
+                    mb: 2, 
+                    border: "2px solid #b91c1c" 
+                }} 
             />
-            <Typography variant="h6" fontWeight="bold">
+            <Typography 
+                variant="h5" 
+                fontWeight="bold" 
+                align="center" // ✅ Ensures text stays centered even if it wraps
+                sx={{ fontSize: { xs: "1.25rem", md: "1.5rem" } }} // ✅ Responsive font size
+            >
                 Mohammed Ghouseuddin Qureshi
             </Typography>
-            <Typography variant="subtitle1" color="gray">
+            <Typography variant="subtitle2" color="gray" sx={{ mt: 0.5 }}>
                 Passionate Programmer
             </Typography>
         </Box>
@@ -47,8 +59,17 @@ const About = ({ open, onClose }) => {
         <Divider sx={{ bgcolor: "#333", mb: 3 }} />
 
         {/* Bio */}
-        <Typography variant="body1" sx={{ color: "#ddd", textAlign: "center", mb: 3, lineHeight: 1.6 }}>
-            Hi ! I built <b>Pickaflick</b> to demonstrate the power of AI in modern web applications. 
+        <Typography 
+            variant="body1" 
+            sx={{ 
+                color: "#ddd", 
+                textAlign: "center", 
+                mb: 3, 
+                lineHeight: 1.6,
+                fontSize: { xs: "0.9rem", md: "1rem" } // ✅ Slightly smaller text for better reading on phone
+            }}
+        >
+            Hi! I built <b>Pickaflick</b> to demonstrate the power of AI in modern web applications. 
             Passionate about building scalable, user-friendly applications using the MERN stack and AI integration.
         </Typography>
 
@@ -67,7 +88,7 @@ const About = ({ open, onClose }) => {
         </Box>
 
         {/* Social Links */}
-        <Stack direction="row" spacing={4} justifyContent="center">
+        <Stack direction="row" spacing={3} justifyContent="center">
             <IconButton href="https://github.com/waseemqureshi04" target="_blank" sx={{ color: "white", "&:hover": { color: "#b91c1c" } }}>
                 <GitHub fontSize="large" />
             </IconButton>
