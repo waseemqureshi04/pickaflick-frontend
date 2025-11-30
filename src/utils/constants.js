@@ -1,17 +1,20 @@
 import customBg from "../assets/my-background.jpg";
+
 export const LOGO =
   "https://github.com/MohammedGhouseuddinQureshi/Logo/blob/main/pickaflick.png?raw=true";
 
 export const USER_AVATAR =
-  "https://occ-0-6247-2164.1.nflxso.net/dnm/api/v6/K6hjPJd6cR6FpVELC5Pd6ovHRSk/AAAABdpkabKqQAxyWzo6QW_ZnPz1IZLqlmNfK-t4L1VIeV1DY00JhLo_LMVFp936keDxj-V5UELAVJrU--iUUY2MaDxQSSO-0qw.png?r=e6e";
+  "https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png";
+
+export const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "https://api.pickaflick.live";
 
 export const API_OPTIONS = {
   method: "GET",
   headers: {
-    accept: "application/json",
+    "Content-Type": "application/json",
   },
 };
-
 export const IMG_CDN_URL = "https://image.tmdb.org/t/p/w500";
 
 export const BG_URL = customBg;

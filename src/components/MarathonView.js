@@ -49,34 +49,40 @@ const MarathonView = () => {
 
   return (
     <div className="text-white p-4">
-      <h2 className="text-2xl font-bold mb-4">Franchise Marathon - Display Collection</h2>
-      <p className="mb-4 text-gray-400">Search by Franchise (e.g., Avengers, Harry Potter)
-</p>
-      <div className="flex gap-2 mb-6">
+      <h2 className="text-2xl font-bold mb-4">Franchise Marathon</h2>
+      <p className="mb-6 text-gray-400">Search by Franchise (e.g., Avengers, Harry Potter)</p>
+      
+      <div className="flex gap-2 mb-8">
         <input
           type="text"
-          className="p-2 text-black rounded w-full md:w-1/3"
-          placeholder="Enter Franchise"
+          className="p-3 bg-black border border-gray-700 rounded text-white w-full md:w-1/3 focus:border-red-600 focus:outline-none placeholder-gray-500"
+          placeholder="Enter Franchise Name"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <button onClick={handleSearch} className="bg-red-700 px-4 py-2 rounded">
+        <button 
+            onClick={handleSearch} 
+            className="bg-red-700 hover:bg-red-800 px-6 py-2 rounded font-bold transition-colors"
+        >
           {loading ? "Calculating..." : "Calculate"}
         </button>
       </div>
 
       {collection && (
-        <div>
-          <div className="flex items-center gap-4 mb-6 bg-gray-800 p-4 rounded-lg">
+        <div className="animate-fade">
+          {/* Header - Black Accent */}
+          <div className="flex flex-col md:flex-row items-center gap-6 mb-8 bg-black p-6 rounded-xl border border-gray-800 shadow-lg">
             {collection.poster_path && (
-                <img src={IMG_CDN_URL + collection.poster_path} alt="cover" className="w-24 rounded" />
+                <img src={IMG_CDN_URL + collection.poster_path} alt="cover" className="w-32 rounded-lg border border-gray-700 shadow-md" />
             )}
-            <div>
-                <h3 className="text-2xl font-bold">{collection.name}</h3>
-                <p className="text-gray-300">{collection.parts.length} Movies</p>
-                <p className="text-yellow-400 font-bold text-xl mt-2">
-                    ⏱️ Total Binge Time: {Math.floor(totalRuntime / 60)}h {totalRuntime % 60}m
-                </p>
+            <div className="text-center md:text-left">
+                <h3 className="text-3xl font-bold">{collection.name}</h3>
+                <p className="text-gray-400 mt-1">{collection.parts.length} Movies</p>
+                <div className="bg-gray-900/50 inline-block px-4 py-2 mt-3 rounded-lg border border-gray-700">
+                    <p className="text-yellow-400 font-bold text-xl">
+                        ⏱️ Total Binge Time: {Math.floor(totalRuntime / 60)}h {totalRuntime % 60}m
+                    </p>
+                </div>
             </div>
           </div>
 
@@ -84,19 +90,18 @@ const MarathonView = () => {
             {collection.parts.map((movie) => (
               <div 
                 key={movie.id} 
-                className="bg-gray-900 p-2 rounded cursor-pointer hover:scale-105 transition"
-                onClick={() => setSelectedMovie(movie)} // Open Modal
+                className="bg-black border border-gray-800 p-3 rounded-lg cursor-pointer hover:scale-105 transition hover:border-gray-500"
+                onClick={() => setSelectedMovie(movie)}
               >
-                <img src={IMG_CDN_URL + movie.poster_path} alt={movie.title} className="rounded mb-2" />
-                <h4 className="font-bold text-sm">{movie.title}</h4>
-                <p className="text-xs text-gray-400">({movie.release_date?.split("-")[0]})</p>
+                <img src={IMG_CDN_URL + movie.poster_path} alt={movie.title} className="rounded mb-3 w-full" />
+                <h4 className="font-bold text-sm leading-tight">{movie.title}</h4>
+                <p className="text-xs text-gray-500 mt-1">({movie.release_date?.split("-")[0]})</p>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Render Modal */}
       {selectedMovie && (
         <MovieModal 
           movie={selectedMovie} 

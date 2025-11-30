@@ -3,9 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import lang from "../utils/languageConstants";
 import { addGptMovieResult, setGptLoading } from "../utils/gptSlice";
 
+// ✅ MUI Imports
+import { Paper, InputBase, Button, CircularProgress, Box } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+
 const GptSearchBar = () => {
   const dispatch = useDispatch();
   const langKey = useSelector((store) => store.config.lang);
+  const isLoading = useSelector((store) => store.gpt.loading);
   const searchText = useRef(null);
 
   const searchMovieTMDB = async (movie) => {
@@ -19,6 +24,8 @@ const GptSearchBar = () => {
   };
 
   const handleGptSearchClick = async () => {
+    if (!searchText.current.value) return; 
+    
     dispatch(setGptLoading(true));
 
     const gptQuery =
@@ -29,12 +36,8 @@ const GptSearchBar = () => {
     try {
       const response = await fetch("https://api.pickaflick.live/api/gpt", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messages: [{ role: "user", content: gptQuery }],
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: [{ role: "user", content: gptQuery }] }),
       });
 
       const gptResults = await response.json();
@@ -56,6 +59,9 @@ const GptSearchBar = () => {
       dispatch(
         addGptMovieResult({ movieNames: gptMovies, movieResults: tmdbResults })
       );
+      
+      // ✅ Optional: Set loading to false here if you want the spinner to stop after results load
+      dispatch(setGptLoading(false));
 
     } catch (error) {
       console.error(error);
@@ -64,25 +70,59 @@ const GptSearchBar = () => {
   };
 
   return (
-    <div className="pt-[40%] md:pt-[10%] flex justify-center">
-      <form
-        className="w-full md:w-1/2 bg-black grid grid-cols-12 rounded-lg"
+    <Box sx={{ pt: { xs: "35%", md: "10%" }, display: "flex", justifyContent: "center" }}>
+      <Paper
+        component="form"
         onSubmit={(e) => e.preventDefault()}
+        sx={{
+          p: "2px 4px",
+          display: "flex",
+          alignItems: "center",
+          width: { xs: "90%", md: "50%" },
+          bgcolor: "black",
+          border: "1px solid #374151",
+        }}
       >
-        <input
-          ref={searchText}
-          type="text"
-          className="p-2 m-2 md:p-4 md:m-4 col-span-9 rounded-lg"
+        <InputBase
+          sx={{ ml: 1, flex: 1, color: "white" }}
           placeholder={lang[langKey].gptSearchPlaceholder}
+          inputRef={searchText}
         />
-        <button
-          className="col-span-3 m-2 md:m-4 py-2 px-2 md:px-4 bg-red-700 text-white rounded-lg text-sm md:text-xl"
+        <Button
+          variant="contained"
+          sx={{ 
+            p: "10px 20px", 
+            borderRadius: "0 4px 4px 0",
+            bgcolor: "#b91c1c", // red-700
+            "&:hover": { bgcolor: "#991b1b" },
+            // ✅ Fix: Ensure the button stays visible and red when disabled (loading)
+            "&.Mui-disabled": {
+              bgcolor: "#7f1d1d", // Darker red to indicate processing
+              color: "white"      // Force spinner/text to be white
+            }
+          }}
           onClick={handleGptSearchClick}
+          disabled={isLoading}
         >
-          {lang[langKey].search}
-        </button>
-      </form>
-    </div>
+          {isLoading ? (
+            // ✅ Fix: Force white color on loader so it doesn't fade out
+            <CircularProgress size={24} sx={{ color: "white" }} />
+          ) : (
+            <>
+                {/* ✅ Responsive Logic: Icon only on Mobile, Icon+Text on Desktop */}
+                <Box sx={{ display: { xs: "flex", md: "none" } }}>
+                   <SearchIcon />
+                </Box>
+                
+                <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1 }}>
+                   <SearchIcon />
+                   {lang[langKey].search}
+                </Box>
+            </>
+          )}
+        </Button>
+      </Paper>
+    </Box>
   );
 };
 export default GptSearchBar;

@@ -9,7 +9,6 @@ const CollabFinder = () => {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
   
-  // State for Modal
   const [selectedMovie, setSelectedMovie] = useState(null);
 
   const fetchId = async (name) => {
@@ -23,7 +22,6 @@ const CollabFinder = () => {
     setResults([]);
     setStatus("");
 
-    // 1. Find ID for Person A
     const p1Data = await fetchId(person1);
     if (!p1Data) {
       setStatus(`Could not find "${person1}"`);
@@ -31,7 +29,6 @@ const CollabFinder = () => {
       return;
     }
 
-    // 2. Find ID for Person B
     const p2Data = await fetchId(person2);
     if (!p2Data) {
       setStatus(`Could not find "${person2}"`);
@@ -39,7 +36,6 @@ const CollabFinder = () => {
       return;
     }
 
-    // 3. Discover movies with BOTH IDs
     const res = await fetch(
       `https://api.pickaflick.live/api/tmdb/discover/movie?with_people=${p1Data.id},${p2Data.id}&sort_by=popularity.desc`
     );
@@ -57,45 +53,48 @@ const CollabFinder = () => {
   return (
     <div className="text-white p-4">
       <h2 className="text-2xl font-bold mb-4">The Dynamic Duo</h2>
-      <p className="mb-4 text-gray-400">Enter two names ( e.g., Cillian Murphy & Christopher Nolan )</p>
+      <p className="mb-6 text-gray-400">Enter two names to find their collaborations (e.g., Cillian Murphy & Christopher Nolan)</p>
       
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="flex flex-col md:flex-row gap-4 mb-8 items-center">
         <input 
-          className="p-3 rounded text-black flex-1" 
-          placeholder="(Actor/Director)" 
+          className="p-3 bg-black border border-gray-700 rounded text-white flex-1 w-full focus:border-green-600 focus:outline-none placeholder-gray-500" 
+          placeholder="(e.g., Actor/Director)" 
           value={person1} 
           onChange={(e) => setPerson1(e.target.value)} 
         />
-        <span className="text-2xl font-bold self-center">+</span>
+        <span className="text-2xl font-bold text-gray-500">+</span>
         <input 
-          className="p-3 rounded text-black flex-1" 
-          placeholder="(Actor/Director)" 
+          className="p-3 bg-black border border-gray-700 rounded text-white flex-1 w-full focus:border-green-600 focus:outline-none placeholder-gray-500" 
+          placeholder="(e.g., Actor/Director)" 
           value={person2} 
           onChange={(e) => setPerson2(e.target.value)} 
         />
-        <button onClick={handleFind} className="bg-green-600 px-6 py-3 rounded font-bold">
+        <button onClick={handleFind} className="bg-green-700 hover:bg-green-800 px-8 py-3 rounded font-bold transition-colors w-full md:w-auto">
           {loading ? "Searching..." : "Find Collabs"}
         </button>
       </div>
 
-      {status && <p className="text-xl mb-4 font-semibold">{status}</p>}
+      {status && (
+        <p className={`text-xl mb-6 font-semibold p-4 rounded border ${results.length > 0 ? 'bg-green-900/20 border-green-800 text-green-400' : 'bg-red-900/20 border-red-800 text-red-400'}`}>
+            {status}
+        </p>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
         {results.map((m) => (
           m.poster_path && (
             <div 
               key={m.id} 
-              className="hover:scale-105 transition cursor-pointer" // Added cursor pointer
-              onClick={() => setSelectedMovie(m)} // Open Modal
+              className="bg-black border border-gray-800 p-2 rounded-lg hover:scale-105 transition cursor-pointer hover:border-gray-500"
+              onClick={() => setSelectedMovie(m)} 
             >
-              <img src={IMG_CDN_URL + m.poster_path} className="rounded" alt={m.title} />
-              <p className="mt-2 text-sm">{m.title}</p>
+              <img src={IMG_CDN_URL + m.poster_path} className="rounded w-full" alt={m.title} />
+              <p className="mt-2 text-sm font-semibold truncate">{m.title}</p>
             </div>
           )
         ))}
       </div>
 
-      {/* Render Modal */}
       {selectedMovie && (
         <MovieModal 
           movie={selectedMovie} 

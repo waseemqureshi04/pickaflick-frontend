@@ -9,6 +9,7 @@ const MainContainer = () => {
   const [showModal, setShowModal] = useState(false);
   const movies = useSelector((store) => store.movies?.nowPlayingMovies);
 
+  // Use Shimmer if movies are not loaded yet
   if (!movies) return <Shimmer />;
 
   const mainMovie = movies[0];

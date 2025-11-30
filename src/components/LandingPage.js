@@ -31,12 +31,12 @@ const LandingPage = () => {
       </div>
 
       {/* Register Button (Bottom Left) */}
-      <div className="absolute bottom-12 left-8 md:bottom-20 md:left-10 z-20">
+      <div className="absolute bottom-12 mb-20 left-8 md:bottom-0 md:left-10 z-20">
         <button onClick={() => navigate("/register")} className="px-6 py-3 md:px-8 md:py-4 bg-red-700 hover:bg-red-800 text-white font-bold rounded-lg text-lg md:text-xl transition-transform hover:scale-105 shadow-lg">Register</button>
       </div>
       
       {/* Login Button (Bottom Right) */}
-      <div className="absolute bottom-12 right-8 md:bottom-20 md:right-10 z-20">
+      <div className="absolute bottom-12 mb-20 right-8 md:bottom-0 md:right-10 z-20">
         <button onClick={() => navigate("/login")} className="px-6 py-3 md:px-8 md:py-4 bg-white hover:bg-gray-200 text-black font-bold rounded-lg text-lg md:text-xl transition-transform hover:scale-105 shadow-lg">Login</button>
       </div>
     </div>

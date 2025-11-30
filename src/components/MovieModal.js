@@ -50,15 +50,16 @@ const MovieModal = ({ movie, onClose }) => {
       <Paper 
         elevation={24}
         sx={{ 
-            bgcolor: "#181818", 
+            bgcolor: "black", // ✅ Changed to True Black
             color: "white", 
             p: { xs: 2, md: 4 },
             borderRadius: 2, 
+            border: "1px solid #333", // ✅ Added subtle border
             width: { xs: "95%", md: "70%", lg: "60%" },
             maxHeight: "90vh",
             overflowY: "auto",
             position: "relative",
-            marginTop: { xs: "0px", md: 0 }, // ✅ Removed top margin since header is gone
+            marginTop: { xs: "0px", md: 0 }, 
             "&::-webkit-scrollbar": { display: "none" },
             scrollbarWidth: "none",
             "-ms-overflow-style": "none",
@@ -73,8 +74,8 @@ const MovieModal = ({ movie, onClose }) => {
             top: 10, 
             right: 10, 
             color: "gray", 
-            bgcolor: "rgba(0,0,0,0.5)",
-            "&:hover": { color: "white", bgcolor: "rgba(0,0,0,0.8)" } 
+            bgcolor: "rgba(255,255,255,0.1)", // slightly lighter on black
+            "&:hover": { color: "white", bgcolor: "rgba(255,255,255,0.2)" } 
           }}
         >
           <CloseIcon />
@@ -101,7 +102,7 @@ const MovieModal = ({ movie, onClose }) => {
         </Typography>
 
         {trailerKey ? (
-          <Box sx={{ position: "relative", paddingBottom: "56.25%", height: 0, width: "100%", mb: 4, borderRadius: "8px", overflow: "hidden" }}>
+          <Box sx={{ position: "relative", paddingBottom: "56.25%", height: 0, width: "100%", mb: 4, borderRadius: "8px", overflow: "hidden", border: "1px solid #333" }}>
             <iframe
               style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", borderRadius: "8px" }}
               src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1`}
@@ -112,8 +113,8 @@ const MovieModal = ({ movie, onClose }) => {
             ></iframe>
           </Box>
         ) : trailerError ? (
-          <Box sx={{ height: 150, bgcolor: "#000", display: "flex", alignItems: "center", justifyContent: "center", mb: 4, borderRadius: 2 }}>
-             <Typography variant="body2" color="gray">Trailer not available.</Typography>
+          <Box sx={{ height: 150, bgcolor: "#111", display: "flex", alignItems: "center", justifyContent: "center", mb: 4, borderRadius: 2, border: "1px solid #333" }}>
+              <Typography variant="body2" color="gray">Trailer not available.</Typography>
           </Box>
         ) : null}
 
@@ -124,7 +125,7 @@ const MovieModal = ({ movie, onClose }) => {
             </Typography>
             <ul className="list-none p-0 m-0 space-y-4">
               {reviews.slice(0, 3).map((review) => (
-                <li key={review.id} className="bg-[#222] p-4 rounded-lg border border-[#333]">
+                <li key={review.id} className="bg-[#111] p-4 rounded-lg border border-[#333]"> {/* ✅ Darker review cards */}
                   <Typography variant="subtitle2" fontWeight="bold" sx={{ color: "#e50914" }}>
                     {review.author}
                   </Typography>

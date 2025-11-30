@@ -2,10 +2,24 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { LOGO, SUPPORTED_LANGUAGES } from "../utils/constants";
+import { LOGO, SUPPORTED_LANGUAGES, USER_AVATAR } from "../utils/constants";
 import { auth } from "../utils/firebase";
 import { addUser, removeUser } from "../utils/userSlice";
 import { changeLanguage } from "../utils/configSlice";
+
+// ✅ MUI Imports
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Button,
+  Select,
+  MenuItem,
+  Menu,
+  Avatar,
+  Typography,
+  Container,
+} from "@mui/material";
 import { KeyboardArrowDown, Logout } from "@mui/icons-material";
 
 const Header = () => {
@@ -14,106 +28,183 @@ const Header = () => {
   const location = useLocation();
   const user = useSelector((store) => store.user);
   const isModalOpen = useSelector((store) => store.config.isModalOpen);
-  const [isOpen, setIsOpen] = useState(false);
+
+  // ✅ MUI Menu State
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  
   const isGptPage = location.pathname === "/gpt";
-  const isHomePage = location.pathname === "/home" || location.pathname === "/browse";
-  const isStudioPage = location.pathname === "/studio" || location.pathname === "/features";
+  const isHomePage = ["/home", "/browse"].includes(location.pathname);
+  const isStudioPage = ["/studio", "/features"].includes(location.pathname);
 
-  const handleSignOut = () => {
-    signOut(auth).then(() => {}).catch((error) => { navigate("/error"); });
-  };
-
+  // Auth Listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const { uid, email, displayName, photoURL, emailVerified } = user;
         dispatch(addUser({ uid, email, displayName, photoURL, emailVerified }));
-        
+
         if (emailVerified && ["/", "/login", "/register", "/reset-password"].includes(location.pathname)) {
-           navigate("/home");
+          navigate("/home");
         }
       } else {
         dispatch(removeUser());
         if (!["/", "/login", "/register", "/reset-password", "/privacy-policy", "/terms-of-service"].includes(location.pathname)) {
-           navigate("/");
+          navigate("/");
         }
       }
     });
     return () => unsubscribe();
   }, [dispatch, navigate, location.pathname]);
 
-  const handleLanguageChange = (e) => { dispatch(changeLanguage(e.target.value)); };
+  const handleSignOut = () => {
+    handleCloseUserMenu();
+    signOut(auth).catch(() => navigate("/error"));
+  };
+
+  const handleLanguageChange = (e) => {
+    dispatch(changeLanguage(e.target.value));
+  };
+
+  // ✅ Menu Handlers
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
 
   if (isModalOpen) return null;
 
   return (
-    <div 
-      className="absolute w-full px-4 py-4 bg-gradient-to-b from-black z-50 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0 transition-all duration-300"
+    // ✅ AppBar replaces the outer div
+    <AppBar 
+      position="absolute" 
+      sx={{ 
+        background: "linear-gradient(to bottom, black, transparent)", 
+        boxShadow: "none", 
+        zIndex: 50 
+      }}
     >
-      <div className="flex flex-col items-center md:items-start">
-        <img 
-            className="w-32 mx-auto md:mx-0 md:w-44 cursor-pointer hover:opacity-80 transition drop-shadow-lg" 
-            src={LOGO} alt="logo" onClick={() => navigate("/home")}
-        />
-      </div>
-
-      {user && user.emailVerified && (
-        <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4">
+      <Container maxWidth="xl">
+        <Toolbar disableGutters sx={{ flexDirection: { xs: "column", md: "row" }, justifyContent: "space-between", py: 2 }}>
           
-          {isGptPage && (
-            <select className="hidden md:block p-2 bg-gray-900 text-white text-sm rounded-lg border border-gray-600 focus:outline-none" onChange={handleLanguageChange}>
-              {SUPPORTED_LANGUAGES.map((lang) => <option key={lang.identifier} value={lang.identifier}>{lang.name}</option>)}
-            </select>
-          )}
-          
-          {/* ✅ Hide Home Button if already on Home */}
-          {!isHomePage && (
-            <button 
-              className="py-1 px-3 bg-red-700 md:py-2 md:px-4  border border-gray-700 text-white rounded-lg text-xs md:text-smtransition" 
+          {/* Logo Section */}
+          <Box sx={{ display: "flex", justifyContent: { xs: "center", md: "flex-start" }, mb: { xs: 2, md: 0 } }}>
+            <Box
+              component="img"
+              src={LOGO}
+              alt="logo"
+              sx={{ width: { xs: 128, md: 176 }, cursor: "pointer", "&:hover": { opacity: 0.8 } }}
               onClick={() => navigate("/home")}
-            >
-              Home
-            </button>
-          )}
+            />
+          </Box>
 
-          {/* ✅ Hide Studio Button if already on Studio */}
-          {!isStudioPage && (
-            <button 
-              className="py-1 px-3 bg-indigo-600 md:py-2 md:px-4 border-gray-700 text-white rounded-lg text-xs md:text-sm transition" 
-              onClick={() => navigate("/studio")}
-            >
-              Studio
-            </button>
+          {/* User Controls Section */}
+          {user && user.emailVerified && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap", justifyContent: "center" }}>
+              
+              {/* Language Selector */}
+              {isGptPage && (
+                <Select
+                  size="small"
+                  defaultValue={SUPPORTED_LANGUAGES[0].identifier}
+                  onChange={handleLanguageChange}
+                  sx={{ 
+                    bgcolor: "grey.900", 
+                    color: "white", 
+                    ".MuiSvgIcon-root": { color: "white" },
+                    "& .MuiOutlinedInput-notchedOutline": { borderColor: "gray" },
+                    display: { xs: "none", md: "flex" }
+                  }}
+                >
+                  {SUPPORTED_LANGUAGES.map((lang) => (
+                    <MenuItem key={lang.identifier} value={lang.identifier}>
+                      {lang.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+
+              {/* Navigation Buttons */}
+              {!isHomePage && (
+                <Button
+                  variant="contained"
+                  onClick={() => navigate("/home")}
+                  sx={{ bgcolor: "#b91c1c", "&:hover": { bgcolor: "#991b1b" } }} // red-700
+                >
+                  Home
+                </Button>
+              )}
+
+              {!isStudioPage && (
+                <Button
+                  variant="contained"
+                  onClick={() => navigate("/studio")}
+                  sx={{ bgcolor: "#4f46e5", "&:hover": { bgcolor: "#4338ca" } }} // indigo-600
+                >
+                  Studio
+                </Button>
+              )}
+
+              {!isGptPage && (
+                <Button
+                  variant="contained"
+                  onClick={() => navigate("/gpt")}
+                  sx={{ bgcolor: "#9333ea", "&:hover": { bgcolor: "#7e22ce" }, whiteSpace: "nowrap" }} // purple-600
+                >
+                  GPT Search
+                </Button>
+              )}
+
+              {/* User Avatar & Menu */}
+              <Box sx={{ flexGrow: 0, ml: 1 }}>
+                <Box 
+                    onClick={handleOpenUserMenu} 
+                    sx={{ display: "flex", alignItems: "center", cursor: "pointer", gap: 0.5 }}
+                >
+                    <Avatar
+                        alt={user.displayName}
+                        src={user?.photoURL || USER_AVATAR}
+                        variant="rounded"
+                        sx={{ width: 40, height: 40, border: "2px solid transparent", "&:hover": { borderColor: "white" } }}
+                        imgProps={{ onError: (e) => { e.target.onerror = null; e.target.src = USER_AVATAR; } }} 
+                    />
+                    <KeyboardArrowDown sx={{ color: "white", transform: anchorElUser ? "rotate(180deg)" : "rotate(0deg)", transition: "0.2s" }} />
+                </Box>
+                
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                  keepMounted
+                  transformOrigin={{ vertical: "top", horizontal: "right" }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                  PaperProps={{
+                    sx: { bgcolor: "black", border: "1px solid #374151", color: "white", minWidth: 160 }
+                  }}
+                >
+                   {/* User Info Header in Menu */}
+                   <Box sx={{ px: 2, py: 1, borderBottom: "1px solid #374151", mb: 1 }}>
+                      <Typography variant="caption" color="gray">Signed in as</Typography>
+                      <Typography variant="body2" fontWeight="bold" noWrap>{user.displayName || "User"}</Typography>
+                   </Box>
+
+                  <MenuItem onClick={handleSignOut} sx={{ color: "#ef4444", fontWeight: "bold", gap: 1 }}>
+                    <Logout fontSize="small" />
+                    <Typography textAlign="center">Log Out</Typography>
+                  </MenuItem>
+                </Menu>
+              </Box>
+
+            </Box>
           )}
-          
-          {/* ✅ Hide GPT Button if already on GPT */}
-          {!isGptPage && (
-            <button 
-              className="py-1 px-3 md:py-2 bg-purple-600 md:px-4 border border-gray-700 text-white rounded-lg text-xs md:text-sm transition whitespace-nowrap" 
-              onClick={() => navigate("/gpt")}
-            >
-              GPT Search
-            </button>
-          )}
-          
-          <div className="relative ml-2">
-            <div className="flex items-center gap-1 cursor-pointer group" onClick={() => setIsOpen(!isOpen)}>
-                <img className="w-8 h-8 md:w-10 md:h-10 rounded-md border-2 border-transparent group-hover:border-white transition object-cover shadow-md" alt="usericon" src={user?.photoURL} />
-                <KeyboardArrowDown className={`text-white transition-transform duration-200 drop-shadow-md ${isOpen ? 'rotate-180' : ''}`} />
-            </div>
-            
-            {isOpen && (
-                <div className="absolute right-0 mt-2 w-40 md:w-48 bg-black border border-gray-700 rounded-lg shadow-xl overflow-hidden animate-fade z-50">
-                    <div className="px-4 py-3 border-b border-gray-700"><p className="text-xs text-gray-400">Signed in as</p><p className="text-sm font-bold text-white truncate">{user.displayName || "User"}</p></div>
-                    <button onClick={handleSignOut} className="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-gray-900 transition font-bold flex items-center gap-2">
-                        <Logout fontSize="small" /> Log Out
-                    </button>
-                </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 };
+
 export default Header;
