@@ -50,7 +50,7 @@ const MarathonView = () => {
   return (
     <div className="text-white p-4">
       <h2 className="text-2xl font-bold mb-4">Franchise Marathon</h2>
-      <p className="mb-6 text-gray-400">Search by Franchise (e.g., Avengers, Harry Potter)</p>
+      <p className="mb-6 text-gray-400">Search by Franchise (e.g., The Avengers, Harry Potter)</p>
       
       <div className="flex gap-2 mb-8">
         <input
