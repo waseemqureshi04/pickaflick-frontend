@@ -2,7 +2,7 @@ Markdown
 
 #  Pickaflick - AI-Powered Movie Companion
 
-![Pickaflick Banner](https://pickaflick.live/logo.png) [![Live Demo](https://img.shields.io/badge/🔴_Live_Demo-pickaflick.live-red?style=for-the-badge&logo=vercel)](https://pickaflick.live)
+![Pickaflick Banner](https://github.com/MohammedGhouseuddinQureshi/Logo/blob/main/pickaflick.png?raw=true) [![Live Demo](https://img.shields.io/badge/🔴_Live_Demo-pickaflick.live-red?style=for-the-badge&logo=vercel)](https://pickaflick.live)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Redux Toolkit](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white)](https://redux-toolkit.js.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
@@ -55,12 +55,15 @@ git clone [https://github.com/waseemqureshi04/pickaflick.git](https://github.com
 cd pickaflick
                 
 ### 2. Install Dependencies
+
 Bash
 
 npm install
-# or
+or
 yarn install
-3. Configure Environment Variables
+
+### 3. Configure Environment Variables
+
 Create a .env file in the root directory and add your API keys:
 
 Code snippet
