@@ -10,7 +10,7 @@ const useNowPlayingMovies = () => {
   const getNowPlayingMovies = async () => {
     try {
       const data = await fetch(
-        `${API_BASE_URL}/api/tmdb/movie/now_playing?page=1`,
+        `${API_BASE_URL}/api/tmdb/movie/now_playing?page=2`,
         API_OPTIONS
       );
       

@@ -10,7 +10,7 @@ const useUpcomingMovies = () => {
   const getUpcomingMovies = async () => {
     try {
       const data = await fetch(
-        `${API_BASE_URL}/api/tmdb/movie/upcoming?language=en-US&page=1`,
+        `${API_BASE_URL}/api/tmdb/movie/upcoming?language=en-US&page=2`,
         API_OPTIONS
       );
 

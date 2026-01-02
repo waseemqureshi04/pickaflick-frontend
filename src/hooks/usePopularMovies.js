@@ -10,7 +10,7 @@ const usePopularMovies = () => {
   const getPopularMovies = async () => {
     try {
       const data = await fetch(
-        `${API_BASE_URL}/api/tmdb/movie/popular?page=1`,
+        `${API_BASE_URL}/api/tmdb/movie/popular?page=2`,
         API_OPTIONS
       );
 
