@@ -2,39 +2,30 @@ import Header from "./Header";
 import { BG_URL } from "../utils/constants";
 import GptMovieSuggestions from "./GptMovieSuggestions";
 import GptSearchBar from "./GptSearchBar";
-import { Box, Container } from "@mui/material";
 
 const GPTSearch = () => {
   return (
-    <Box sx={{ minHeight: "100vh", position: "relative", bgcolor: "black" }}>
-      <Header />
-      
-      {/* Background Image Wrapper */}
-      <Box 
-        sx={{ 
-            position: "fixed", 
-            top: 0, 
-            left: 0, 
-            width: "100%", 
-            height: "100vh", 
-            zIndex: 0 
-        }}
-      >
-        <Box 
-            component="img" 
+    <>
+      {/* Background Layer - Fixed */}
+      <div className="fixed -z-10 w-full h-full top-0 left-0">
+        <img 
+            className="h-full w-full object-cover opacity-60" 
             src={BG_URL} 
             alt="background" 
-            sx={{ width: "100%", height: "100%", objectFit: "cover" }} 
         />
-        <Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", bgcolor: "rgba(0,0,0,0.6)" }} />
-      </Box>
-
-      {/* Content Wrapper */}
-      <Container maxWidth="xl" sx={{ position: "relative", zIndex: 10 }}>
-        <GptSearchBar />
-        <GptMovieSuggestions />
-      </Container>
-    </Box>
+        {/* Dark overlay for readability */}
+        <div className="absolute inset-0 bg-black/70"></div>
+      </div>
+      
+      {/* Content Layer */}
+      <div className="min-h-screen relative z-10 w-full overflow-x-hidden">
+        <Header />
+        <div className="w-full max-w-7xl mx-auto px-4">
+          <GptSearchBar />
+          <GptMovieSuggestions />
+        </div>
+      </div>
+    </>
   );
 };
 export default GPTSearch;

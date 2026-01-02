@@ -2,45 +2,39 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { LOGO, SUPPORTED_LANGUAGES, USER_AVATAR } from "../utils/constants";
+import { motion, AnimatePresence } from "framer-motion"; 
+import { LogOut, User, ChevronDown, MonitorPlay, Sparkles, Home, Menu, X } from "lucide-react"; 
+
+import { LOGO, USER_AVATAR, SUPPORTED_LANGUAGES } from "../utils/constants";
 import { auth } from "../utils/firebase";
 import { addUser, removeUser } from "../utils/userSlice";
 import { changeLanguage } from "../utils/configSlice";
 import About from "./About";
-import {
-  AppBar,
-  Toolbar,
-  Box,
-  Button,
-  Select,
-  MenuItem,
-  Menu,
-  Avatar,
-  Typography,
-  Container,
-} from "@mui/material";
-import { KeyboardArrowDown, Logout, Info } from "@mui/icons-material";
 
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((store) => store.user);
-  const isModalOpen = useSelector((store) => store.config.isModalOpen);
-  const [anchorElUser, setAnchorElUser] = useState(null);
-  const [showAbout, setShowAbout] = useState(false);
   
-  const isGptPage = location.pathname === "/gpt";
-  const isHomePage = ["/home", "/browse"].includes(location.pathname);
-  const isStudioPage = ["/studio", "/features"].includes(location.pathname);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false); // New Mobile State
+  const [showAbout, setShowAbout] = useState(false);
 
-  // Auth Listener
+  const isGptPage = location.pathname === "/gpt";
+  
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const { uid, email, displayName, photoURL, emailVerified } = user;
         dispatch(addUser({ uid, email, displayName, photoURL, emailVerified }));
-
         if (emailVerified && ["/", "/login", "/register", "/reset-password"].includes(location.pathname)) {
           navigate("/home");
         }
@@ -55,7 +49,6 @@ const Header = () => {
   }, [dispatch, navigate, location.pathname]);
 
   const handleSignOut = () => {
-    handleCloseUserMenu();
     signOut(auth).catch(() => navigate("/error"));
   };
 
@@ -63,160 +56,151 @@ const Header = () => {
     dispatch(changeLanguage(e.target.value));
   };
 
-  // Menu Handlers
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
+  // Helper to close mobile menu on navigation
+  const handleNavClick = (path) => {
+    navigate(path);
+    setShowMobileMenu(false);
   };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
-  // Handle opening About Modal
-  const handleOpenAbout = () => {
-    handleCloseUserMenu();
-    setShowAbout(true);
-  };
-
-  if (isModalOpen) return null;
 
   return (
-    <AppBar 
-      position="absolute" 
-      sx={{ 
-        background: "linear-gradient(to bottom, black, transparent)", 
-        boxShadow: "none", 
-        zIndex: 50 
-      }}
-    >
-      <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ flexDirection: { xs: "column", md: "row" }, justifyContent: "space-between", py: 2 }}>
-          
-          {/* Logo Section */}
-          <Box sx={{ display: "flex", justifyContent: { xs: "center", md: "flex-start" }, mb: { xs: 2, md: 0 } }}>
-            <Box
-              component="img"
-              src={LOGO}
-              alt="logo"
-              sx={{ width: { xs: 128, md: 176 }, cursor: "pointer", "&:hover": { opacity: 0.8 } }}
-              onClick={() => navigate("/home")}
+    <>
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`fixed top-0 w-full z-50 transition-all duration-300 px-4 md:px-12 py-3 flex items-center justify-between ${
+          isScrolled || showMobileMenu ? "glass bg-black/90" : "bg-gradient-to-b from-black/90 to-transparent"
+        }`}
+      >
+        {/* Left Side: Logo & Mobile Toggle */}
+        <div className="flex items-center gap-4 md:gap-8">
+            {/* Mobile Menu Button */}
+            {user && (
+              <button 
+                className="md:hidden text-white" 
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+              >
+                {showMobileMenu ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            )}
+
+            <img
+                src={LOGO}
+                alt="logo"
+                className="w-24 md:w-36 cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => navigate("/home")}
             />
-          </Box>
 
-          {/* User Controls Section */}
-          {user && user.emailVerified && (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap", justifyContent: "center" }}>
-              
-              {/* Language Selector */}
-              {isGptPage && (
-                <Select
-                  size="small"
-                  defaultValue={SUPPORTED_LANGUAGES[0].identifier}
-                  onChange={handleLanguageChange}
-                  sx={{ 
-                    bgcolor: "grey.900", 
-                    color: "white", 
-                    ".MuiSvgIcon-root": { color: "white" },
-                    "& .MuiOutlinedInput-notchedOutline": { borderColor: "gray" },
-                    display: { xs: "none", md: "flex" }
-                  }}
-                >
-                  {SUPPORTED_LANGUAGES.map((lang) => (
-                    <MenuItem key={lang.identifier} value={lang.identifier}>
-                      {lang.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
+            {/* Desktop Navigation */}
+            {user && (
+                <div className="hidden md:flex gap-6 text-sm font-medium text-gray-300">
+                <button onClick={() => navigate("/home")} className="hover:text-white transition flex items-center gap-2">
+                    <Home size={16} /> Home
+                </button>
+                <button onClick={() => navigate("/studio")} className="hover:text-white transition flex items-center gap-2">
+                    <MonitorPlay size={16} /> Studio
+                </button>
+                <button onClick={() => navigate("/gpt")} className="hover:text-brand-light transition flex items-center gap-2 text-brand-light">
+                    <Sparkles size={16} /> GPT Search
+                </button>
+                </div>
+            )}
+        </div>
 
-              {/* Navigation Buttons */}
-              {!isHomePage && (
-                <Button
-                  variant="contained"
-                  onClick={() => navigate("/home")}
-                  sx={{ bgcolor: "#b91c1c", "&:hover": { bgcolor: "#991b1b" } }}
-                >
-                  Home
-                </Button>
-              )}
+        {/* Right Side: User Profile & Actions */}
+        {user && (
+          <div className="flex items-center gap-2 md:gap-4">
+            
+            {isGptPage && (
+              <select
+                className="bg-black/40 border border-white/30 text-white text-xs py-1 px-2 rounded hover:bg-white/10 transition outline-none cursor-pointer"
+                onChange={handleLanguageChange}
+              >
+                {SUPPORTED_LANGUAGES.map((lang) => (
+                  <option key={lang.identifier} value={lang.identifier} className="bg-gray-900">
+                    {lang.name}
+                  </option>
+                ))}
+              </select>
+            )}
 
-              {!isStudioPage && (
-                <Button
-                  variant="contained"
-                  onClick={() => navigate("/studio")}
-                  sx={{ bgcolor: "#4f46e5", "&:hover": { bgcolor: "#4338ca" } }} // indigo-600
-                >
-                  Studio
-                </Button>
-              )}
+            {/* User Dropdown Trigger */}
+            <div 
+              className="relative group"
+              onMouseEnter={() => setShowDropdown(true)}
+              onMouseLeave={() => setShowDropdown(false)}
+              onClick={() => setShowDropdown(!showDropdown)} // Allow click on mobile
+            >
+              <div className="flex items-center gap-2 cursor-pointer py-2">
+                <img
+                  src={user?.photoURL || USER_AVATAR}
+                  alt="user"
+                  className="w-8 h-8 rounded-md object-cover border border-transparent group-hover:border-white transition"
+                />
+                <ChevronDown size={16} className={`hidden md:block text-white transition-transform duration-200 ${showDropdown ? "rotate-180" : ""}`} />
+              </div>
 
-              {!isGptPage && (
-                <Button
-                  variant="contained"
-                  onClick={() => navigate("/gpt")}
-                  sx={{ bgcolor: "#9333ea", "&:hover": { bgcolor: "#7e22ce" }, whiteSpace: "nowrap" }}
-                >
-                  GPT Search
-                </Button>
-              )}
+              <AnimatePresence>
+                {showDropdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 top-full mt-2 w-48 glass-card rounded-md overflow-hidden z-[60]"
+                  >
+                    <div className="px-4 py-3 border-b border-white/10">
+                      <p className="text-xs text-gray-400">Signed in as</p>
+                      <p className="text-sm font-semibold text-white truncate">{user.displayName}</p>
+                    </div>
 
-              {/* User Avatar & Menu */}
-              <Box sx={{ flexGrow: 0, ml: 1 }}>
-                <Box 
-                    onClick={handleOpenUserMenu} 
-                    sx={{ display: "flex", alignItems: "center", cursor: "pointer", gap: 0.5 }}
-                >
-                    <Avatar
-                        alt={user.displayName}
-                        src={user?.photoURL || USER_AVATAR}
-                        variant="rounded"
-                        sx={{ width: 40, height: 40, border: "2px solid transparent", "&:hover": { borderColor: "white" } }}
-                        imgProps={{ onError: (e) => { e.target.onerror = null; e.target.src = USER_AVATAR; } }} 
-                    />
-                    <KeyboardArrowDown sx={{ color: "white", transform: anchorElUser ? "rotate(180deg)" : "rotate(0deg)", transition: "0.2s" }} />
-                </Box>
-                
-                <Menu
-                  sx={{ mt: "45px" }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                  keepMounted
-                  transformOrigin={{ vertical: "top", horizontal: "right" }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
-                  PaperProps={{
-                    sx: { bgcolor: "black", border: "1px solid #374151", color: "white", minWidth: 160 }
-                  }}
-                >
-                   {/* User Info Header in Menu */}
-                   <Box sx={{ px: 2, py: 1, borderBottom: "1px solid #374151", mb: 1 }}>
-                      <Typography variant="caption" color="gray">Signed in as</Typography>
-                      <Typography variant="body2" fontWeight="bold" noWrap>{user.displayName || "User"}</Typography>
-                   </Box>
+                    <div className="py-1">
+                      <button 
+                        onClick={() => setShowAbout(true)}
+                        className="w-full px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white flex items-center gap-2 transition"
+                      >
+                        <User size={16} /> About Dev
+                      </button>
+                      <button 
+                        onClick={handleSignOut}
+                        className="w-full px-4 py-2 text-sm text-brand-light hover:bg-white/10 flex items-center gap-2 transition"
+                      >
+                        <LogOut size={16} /> Sign Out
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        )}
+      </motion.nav>
 
-                  {/* Added About Dev Button */}
-                  <MenuItem onClick={handleOpenAbout} sx={{ gap: 1 }}>
-                     <Info fontSize="small" sx={{ color: "gray" }} />
-                     <Typography>About Dev</Typography>
-                  </MenuItem>
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {showMobileMenu && user && (
+            <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="fixed top-[60px] left-0 w-full bg-black/95 backdrop-blur-xl border-b border-white/10 z-40 overflow-hidden md:hidden"
+            >
+                <div className="flex flex-col p-4 gap-4 text-gray-200">
+                    <button onClick={() => handleNavClick("/home")} className="flex items-center gap-4 p-3 hover:bg-white/10 rounded-lg">
+                        <Home size={20} /> <span className="font-semibold">Home</span>
+                    </button>
+                    <button onClick={() => handleNavClick("/studio")} className="flex items-center gap-4 p-3 hover:bg-white/10 rounded-lg">
+                        <MonitorPlay size={20} /> <span className="font-semibold">Studio</span>
+                    </button>
+                    <button onClick={() => handleNavClick("/gpt")} className="flex items-center gap-4 p-3 hover:bg-white/10 rounded-lg text-brand-light">
+                        <Sparkles size={20} /> <span className="font-semibold">GPT Search</span>
+                    </button>
+                </div>
+            </motion.div>
+        )}
+      </AnimatePresence>
 
-                  <MenuItem onClick={handleSignOut} sx={{ color: "#ef4444", fontWeight: "bold", gap: 1 }}>
-                    <Logout fontSize="small" />
-                    <Typography textAlign="center">Log Out</Typography>
-                  </MenuItem>
-                </Menu>
-              </Box>
-
-            </Box>
-          )}
-
-          {/* Render About Modal */}
-          <About open={showAbout} onClose={() => setShowAbout(false)} />
-
-        </Toolbar>
-      </Container>
-    </AppBar>
+      <About open={showAbout} onClose={() => setShowAbout(false)} />
+    </>
   );
 };
 

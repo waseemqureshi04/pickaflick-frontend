@@ -1,17 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: black;
-  overflow-x: hidden; 
+@layer base {
+  body {
+    @apply bg-cinema-900 text-white font-sans antialiased overflow-x-hidden;
+  }
 }
 
-/* Hide scrollbar */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none; 
-  scrollbar-width: none; 
+@layer utilities {
+  /* The "Premium" Glass Effect */
+  .glass {
+    @apply bg-black/30 backdrop-blur-md border border-white/10 shadow-xl;
+  }
+  
+  /* Slightly stronger glass for modals/dropdowns */
+  .glass-card {
+    @apply bg-zinc-900/80 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+
+  /* Hide Scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

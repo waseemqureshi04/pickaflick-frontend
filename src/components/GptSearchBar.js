@@ -1,9 +1,8 @@
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Search, Sparkles, Loader2 } from "lucide-react"; // Using Premium Icons
 import lang from "../utils/languageConstants";
 import { addGptMovieResult, setGptLoading } from "../utils/gptSlice";
-import { Paper, InputBase, Button, CircularProgress, Box } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 
 const GptSearchBar = () => {
   const dispatch = useDispatch();
@@ -57,7 +56,6 @@ const GptSearchBar = () => {
       dispatch(
         addGptMovieResult({ movieNames: gptMovies, movieResults: tmdbResults })
       );
-      // Set loading to false here if you want the spinner to stop after results load
       dispatch(setGptLoading(false));
 
     } catch (error) {
@@ -67,57 +65,41 @@ const GptSearchBar = () => {
   };
 
   return (
-    <Box sx={{ pt: { xs: "35%", md: "10%" }, display: "flex", justifyContent: "center" }}>
-      <Paper
-        component="form"
+    <div className="pt-[35%] md:pt-[10%] flex justify-center mb-8 md:mb-12 w-full">
+      <form 
+        className="w-[95%] md:w-1/2 glass rounded-full flex items-center p-2 border border-white/20 shadow-2xl shadow-red-900/20"
         onSubmit={(e) => e.preventDefault()}
-        sx={{
-          p: "2px 4px",
-          display: "flex",
-          alignItems: "center",
-          width: { xs: "90%", md: "50%" },
-          bgcolor: "black",
-          border: "1px solid #374151",
-        }}
       >
-        <InputBase
-          sx={{ ml: 1, flex: 1, color: "white" }}
+        {/* Animated Icon */}
+        <div className="hidden sm:block pl-4 text-brand-light animate-pulse">
+           <Sparkles size={24} />
+        </div>
+        
+        {/* Input Field */}
+        <input
+          ref={searchText}
+          type="text"
+          className="flex-1 bg-transparent border-none outline-none text-white px-4 py-2 text-base md:text-lg placeholder-gray-400 font-medium w-full min-w-0"
           placeholder={lang[langKey].gptSearchPlaceholder}
-          inputRef={searchText}
         />
-        <Button
-          variant="contained"
-          sx={{ 
-            p: "10px 20px", 
-            borderRadius: "0 4px 4px 0",
-            bgcolor: "#b91c1c", // red-700
-            "&:hover": { bgcolor: "#991b1b" },
-            "&.Mui-disabled": {
-              bgcolor: "#7f1d1d",
-              color: "white" 
-            }
-          }}
+        
+        {/* Search Button */}
+        <button
+          className="bg-brand-DEFAULT hover:bg-brand-dark text-white rounded-full px-6 py-3 font-bold transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           onClick={handleGptSearchClick}
           disabled={isLoading}
         >
           {isLoading ? (
-            <CircularProgress size={24} sx={{ color: "white" }} />
+            <Loader2 className="animate-spin" size={20} />
           ) : (
             <>
-                {/*Icon only on Mobile, Icon+Text on Desktop */}
-                <Box sx={{ display: { xs: "flex", md: "none" } }}>
-                   <SearchIcon />
-                </Box>
-                
-                <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1 }}>
-                   <SearchIcon />
-                   {lang[langKey].search}
-                </Box>
+              <Search size={20} />
+              <span className="hidden md:inline">{lang[langKey].search}</span>
             </>
           )}
-        </Button>
-      </Paper>
-    </Box>
+        </button>
+      </form>
+    </div>
   );
 };
 export default GptSearchBar;
