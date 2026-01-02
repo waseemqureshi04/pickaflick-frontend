@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IMG_CDN_URL } from "../utils/constants";
+import { IMG_CDN_URL, API_BASE_URL } from "../utils/constants";
 import MovieModal from "./MovieModal";
 
 const MarathonView = () => {
@@ -13,8 +13,9 @@ const MarathonView = () => {
     if (!query) return;
     setLoading(true);
     try {
+      
       const searchRes = await fetch(
-        `https://api.pickaflick.live/api/tmdb/search/collection?query=${query}&language=en-US&page=1`
+        `${API_BASE_URL}/api/tmdb/search/collection?query=${query}&language=en-US&page=1`
       );
       const searchJson = await searchRes.json();
       
@@ -27,13 +28,13 @@ const MarathonView = () => {
       const collectionId = searchJson.results[0].id;
 
       const detailsRes = await fetch(
-        `https://api.pickaflick.live/api/tmdb/collection/${collectionId}?language=en-US`
+        `${API_BASE_URL}/api/tmdb/collection/${collectionId}?language=en-US`
       );
       const detailsJson = await detailsRes.json();
       setCollection(detailsJson);
 
       const moviePromises = detailsJson.parts.map((movie) =>
-        fetch(`https://api.pickaflick.live/api/tmdb/movie/${movie.id}?language=en-US`).then((res) => res.json())
+        fetch(`${API_BASE_URL}/api/tmdb/movie/${movie.id}?language=en-US`).then((res) => res.json())
       );
       
       const moviesDetails = await Promise.all(moviePromises);
@@ -70,7 +71,6 @@ const MarathonView = () => {
 
       {collection && (
         <div className="animate-fade">
-          {/* Header - Black Accent */}
           <div className="flex flex-col md:flex-row items-center gap-6 mb-8 bg-black p-6 rounded-xl border border-gray-800 shadow-lg">
             {collection.poster_path && (
                 <img src={IMG_CDN_URL + collection.poster_path} alt="cover" className="w-32 rounded-lg border border-gray-700 shadow-md" />

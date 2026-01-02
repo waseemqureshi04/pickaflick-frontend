@@ -3,7 +3,7 @@ import { IconButton, Typography, Box, Paper } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch } from "react-redux"; 
 import { setModalOpen } from "../utils/configSlice"; 
-import { IMG_CDN_URL } from "../utils/constants"; 
+import { IMG_CDN_URL, API_BASE_URL } from "../utils/constants"; 
 
   const MovieModal = ({ movie, onClose }) => {
   const dispatch = useDispatch(); 
@@ -12,7 +12,6 @@ import { IMG_CDN_URL } from "../utils/constants";
   const [providers, setProviders] = useState(null); 
   const [trailerError, setTrailerError] = useState(false);
 
-  // Set Default Country (IN = India, US = USA)
   const country = "IN"; 
 
   useEffect(() => {
@@ -22,7 +21,7 @@ import { IMG_CDN_URL } from "../utils/constants";
 
     // 1. Fetch trailer
     fetch(
-      `https://api.pickaflick.live/api/tmdb/movie/${movie.id}/videos?language=en-US`
+      `${API_BASE_URL}/api/tmdb/movie/${movie.id}/videos?language=en-US`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -36,14 +35,14 @@ import { IMG_CDN_URL } from "../utils/constants";
 
     // 2. Fetch reviews
     fetch(
-      `https://api.pickaflick.live/api/tmdb/movie/${movie.id}/reviews?language=en-US&page=1`
+      `${API_BASE_URL}/api/tmdb/movie/${movie.id}/reviews?language=en-US&page=1`
     )
       .then((res) => res.json())
       .then((data) => setReviews(data.results || []));
 
     // 3. Fetch Providers
     fetch(
-      `https://api.pickaflick.live/api/tmdb/movie/${movie.id}/watch/providers`
+      `${API_BASE_URL}/api/tmdb/movie/${movie.id}/watch/providers`
     )
       .then((res) => res.json())
       .then((data) => setProviders(data.results || {}));
@@ -77,7 +76,6 @@ import { IMG_CDN_URL } from "../utils/constants";
         }}
       >
 
-        {/* Close Button */}
         <IconButton
           onClick={onClose}
           sx={{ 
@@ -93,7 +91,6 @@ import { IMG_CDN_URL } from "../utils/constants";
           <CloseIcon />
         </IconButton>
 
-        {/* Flexbox for Title (Left) and Stream (Right) */}
         <Box 
             sx={{ 
                 display: "flex", 
@@ -105,7 +102,6 @@ import { IMG_CDN_URL } from "../utils/constants";
                 pr: { xs: 0, md: 6 }
             }}
         >
-            {/*Title & Rating */}
             <Box>
                 <Typography 
                     variant="h4" 
@@ -123,7 +119,6 @@ import { IMG_CDN_URL } from "../utils/constants";
                 </Typography>
             </Box>
 
-            {/* Stream Section*/}
             {currentProviders?.flatrate && (
                 <Box sx={{ minWidth: 140, textAlign: { xs: "left", md: "right" } }}>
                     <Typography 
@@ -147,12 +142,10 @@ import { IMG_CDN_URL } from "../utils/constants";
             )}
         </Box>
 
-        {/* Overview */}
         <Typography variant="body1" sx={{ mb: 4, color: "#ddd", lineHeight: 1.6, fontSize: { xs: "0.9rem", md: "1rem" } }}>
           {movie.overview}
         </Typography>
 
-        {/* Trailer Section */}
         {trailerKey ? (
           <Box sx={{ position: "relative", paddingBottom: "56.25%", height: 0, width: "100%", mb: 4, borderRadius: "8px", overflow: "hidden", border: "1px solid #333" }}>
             <iframe
@@ -170,7 +163,6 @@ import { IMG_CDN_URL } from "../utils/constants";
           </Box>
         ) : null}
 
-        {/* Reviews Section */}
         {reviews.length > 0 && (
           <Box sx={{ mt: 2, pt: 3, borderTop: "1px solid #333" }}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>

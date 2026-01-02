@@ -9,8 +9,7 @@ export const USER_AVATAR =
 export const DEV_AVATAR =
   "https://avatars.githubusercontent.com/u/183459071?v=4"
 
-export const API_BASE_URL =
-  process.env.REACT_APP_API_URL || "https://api.pickaflick.live";
+export const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 export const API_OPTIONS = {
   method: "GET",

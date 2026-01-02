@@ -1,8 +1,9 @@
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Search, Sparkles, Loader2 } from "lucide-react"; // Using Premium Icons
+import { Search, Sparkles, Loader2 } from "lucide-react"; 
 import lang from "../utils/languageConstants";
 import { addGptMovieResult, setGptLoading } from "../utils/gptSlice";
+import { API_BASE_URL } from "../utils/constants";
 
 const GptSearchBar = () => {
   const dispatch = useDispatch();
@@ -12,9 +13,7 @@ const GptSearchBar = () => {
 
   const searchMovieTMDB = async (movie) => {
     const data = await fetch(
-      "https://api.pickaflick.live/api/tmdb/search/movie?query=" +
-        movie +
-        "&include_adult=false&language=en-US&page=1"
+      `${API_BASE_URL}/api/tmdb/search/movie?query=${movie}&include_adult=false&language=en-US&page=1`
     );
     const json = await data.json();
     return json.results;
@@ -31,7 +30,8 @@ const GptSearchBar = () => {
       ". only give me names of 5 movies, comma seperated like the example result given ahead. Example Result: Gadar, Sholay, Don, Golmaal, Koi Mil Gaya";
 
     try {
-      const response = await fetch("https://api.pickaflick.live/api/gpt", {
+      // FIXED: Uses API_BASE_URL
+      const response = await fetch(`${API_BASE_URL}/api/gpt`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: [{ role: "user", content: gptQuery }] }),
@@ -70,12 +70,10 @@ const GptSearchBar = () => {
         className="w-[95%] md:w-1/2 glass rounded-full flex items-center p-2 border border-white/20 shadow-2xl shadow-red-900/20"
         onSubmit={(e) => e.preventDefault()}
       >
-        {/* Animated Icon */}
         <div className="hidden sm:block pl-4 text-brand-light animate-pulse">
            <Sparkles size={24} />
         </div>
         
-        {/* Input Field */}
         <input
           ref={searchText}
           type="text"
@@ -83,7 +81,6 @@ const GptSearchBar = () => {
           placeholder={lang[langKey].gptSearchPlaceholder}
         />
         
-        {/* Search Button */}
         <button
           className="bg-brand-DEFAULT hover:bg-brand-dark text-white rounded-full px-6 py-3 font-bold transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           onClick={handleGptSearchClick}

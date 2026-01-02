@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IMG_CDN_URL } from "../utils/constants";
+import { IMG_CDN_URL, API_BASE_URL } from "../utils/constants";
 import MovieModal from "./MovieModal";
 
 const CollabFinder = () => {
@@ -8,11 +8,10 @@ const CollabFinder = () => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
-  
   const [selectedMovie, setSelectedMovie] = useState(null);
 
   const fetchId = async (name) => {
-    const res = await fetch(`https://api.pickaflick.live/api/tmdb/search/person?query=${name}&page=1`);
+    const res = await fetch(`${API_BASE_URL}/api/tmdb/search/person?query=${name}&page=1`);
     const json = await res.json();
     return json.results.length > 0 ? json.results[0] : null;
   };
@@ -37,7 +36,7 @@ const CollabFinder = () => {
     }
 
     const res = await fetch(
-      `https://api.pickaflick.live/api/tmdb/discover/movie?with_people=${p1Data.id},${p2Data.id}&sort_by=popularity.desc`
+      `${API_BASE_URL}/api/tmdb/discover/movie?with_people=${p1Data.id},${p2Data.id}&sort_by=popularity.desc`
     );
     const json = await res.json();
 

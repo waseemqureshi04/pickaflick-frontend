@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { IMG_CDN_URL } from "../utils/constants";
+import { IMG_CDN_URL, API_BASE_URL } from "../utils/constants";
 import MovieModal from "./MovieModal";
 import MovieCard from "./MovieCard";
 import ShimmerMovieCard from "./ShimmerMovieCard";
@@ -21,7 +21,7 @@ const VPNScout = () => {
     if (!query) return;
     setLoading(true); 
     const data = await fetch(
-      `https://api.pickaflick.live/api/tmdb/search/movie?query=${query}&page=1`
+      `${API_BASE_URL}/api/tmdb/search/movie?query=${query}&page=1`
     );
     const json = await data.json();
     setMovies(json.results);
@@ -34,7 +34,7 @@ const VPNScout = () => {
     setSelectedMovie(movie);
     
     const data = await fetch(
-      `https://api.pickaflick.live/api/tmdb/movie/${movie.id}/watch/providers`
+      `${API_BASE_URL}/api/tmdb/movie/${movie.id}/watch/providers`
     );
     const json = await data.json();
     setProviders(json.results);
@@ -53,7 +53,6 @@ const VPNScout = () => {
   };
 
   const currentProviders = providers?.[country];
-  
   const shouldShowList = loading || (movies.length > 0 && !selectedMovie);
 
   return (
@@ -61,7 +60,6 @@ const VPNScout = () => {
       <h2 className="text-2xl font-bold mb-4">VPN Scout - Check Global Availability</h2>
       <p className="mb-6 text-gray-400">Search any movie and check if it’s available to stream in your country.</p>
       
-      {/* Search Input - Dark Theme */}
       <div className="flex gap-2 mb-8">
         <input
           className="p-3 bg-black border border-gray-700 rounded text-white w-full md:w-1/3 focus:border-blue-600 focus:outline-none placeholder-gray-500"
@@ -78,7 +76,6 @@ const VPNScout = () => {
         </button>
       </div>
 
-      {/* Movie List Container */}
       {shouldShowList && (
         <div className="relative group">
           <button 
@@ -120,7 +117,6 @@ const VPNScout = () => {
         </div>
       )}
 
-      {/* Provider Details Panel - Black Accent */}
       {selectedMovie && providers && (
         <div className="bg-black p-6 rounded-xl flex flex-col md:flex-row gap-8 animate-fade mt-6 border border-gray-800 shadow-2xl">
           <img src={IMG_CDN_URL + selectedMovie.poster_path} className="w-48 rounded-lg shadow-lg border border-gray-800" alt="poster" />
