@@ -1,4 +1,5 @@
 import { useNavigate, Link } from "react-router-dom";
+import { Helmet } from 'react-helmet-async';
 import { BG_URL } from "../utils/constants";
 import Header from "./Header";
 
@@ -7,6 +8,11 @@ const LandingPage = () => {
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden bg-black">
+      <Helmet>
+        <title>Pickaflick | AI Movie Recommendation System</title>
+        <meta name="description" content="Welcome to Pickaflick. Discover your next favorite movie with your personal AI-powered movie recommendation companion." />
+        <link rel="canonical" href="https://pickaflick.live/" />
+      </Helmet>
       <Header />
       <div className="absolute inset-0">
         <img className="h-full w-full object-cover opacity-60" src={BG_URL} alt="background" />
