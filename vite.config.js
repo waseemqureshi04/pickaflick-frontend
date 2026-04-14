@@ -10,7 +10,7 @@ const transformJsxInJs = () => ({
     if (id.includes('node_modules') || !id.endsWith('.js')) {
       return null
     }
-    
+
     // Check if code contains JSX-like syntax to avoid unnecessary transforms
     if (!code.includes('<') && !code.includes('/>')) {
       return null
@@ -23,10 +23,11 @@ const transformJsxInJs = () => ({
 })
 
 
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'REACT_APP_')
-  
+
   return {
     plugins: [
       react(),
