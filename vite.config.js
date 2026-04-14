@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => {
       transformJsxInJs(),
     ],
     define: {
-      'process.env': env,
+      'process.env': JSON.stringify(env),
     },
     envPrefix: 'REACT_APP_',
     optimizeDeps: {
